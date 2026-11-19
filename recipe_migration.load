@@ -1,0 +1,7 @@
+LOAD DATABASE
+     FROM sqlite:///data/db.sqlite3
+     INTO postgresql://{{POSTGRES_USER}}:{{POSTGRES_PASSWORD}}@db:5432/{{POSTGRES_DB}}
+
+ WITH data only
+
+ INCLUDING ONLY TABLE NAMES LIKE 'recipe_app_recipe';

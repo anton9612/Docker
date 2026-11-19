@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  web:
+    build: .
+    env_file:
+      - .env
+
+    environment:
+      DJANGO_DEBUG: "False"
+
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - static_volume:/app/staticfiles
+      - ./recipes_data:/app/recipes_data
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn recipe_site.wsgi:application --bind 0.0.0.0:8000"
+
+
+
+volumes:
+  postgres_data:
+  static_volume:
